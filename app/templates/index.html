@@ -7,92 +7,51 @@
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet' />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <style>
-            body { margin:0; padding:0; }
-            #map { position:absolute; top:56px; bottom:0; width:100%; }
-        </style>
-    <link href="navbar-top-fixed.css" rel="stylesheet">
-</head>
-<body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-            <a class="navbar-brand" href="#">Ecco Lakes</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-                <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="http://benlaken.com/">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="https://github.com/benlaken/lake_viz_site">code</a>
-                </li>
-                </ul>
-                <form class="form-inline mt-2 mt-md-0">
-                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </form>
-            </div>
-        </nav>
-
-    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.2.0/mapbox-gl-geocoder.min.js'></script>
-    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.2.0/mapbox-gl-geocoder.css' type='text/css' />
-
-    <div id='map' style='width: 100%; height: 60%;'>
-    </div>
-
-    <script>
-        mapboxgl.accessToken = '{{ mytoken }}';
-        var nav = new mapboxgl.NavigationControl();
-        var map = new mapboxgl.Map({
-            container: 'map',
-            center: [12.945578003813353, 64.48815159548138],
-            zoom: 6,
-            style: 'mapbox://styles/mapbox/light-v9',
-            touchZoomRotate: true,
-            pitch: 20,
-        });
-        map.addControl(new mapboxgl.FullscreenControl());
-        map.addControl(nav, 'top-left');
-        map.addControl(new mapboxgl.GeolocateControl({
-                        positionOptions: {
-                            enableHighAccuracy: true
-                                        },
-                        trackUserLocation: true
-                        }));
-        map.addControl(new mapboxgl.ScaleControl(
-                        {
-                            maxWidth: 80,
-                            unit: 'metric'
-                            }
-                            ));
-        map.addControl(new MapboxGeocoder({
-                            accessToken: mapboxgl.accessToken
-                                            }
-                    ));
-
-        map.on('load', function() {
-            map.addLayer({
-                'id': 'ECCO Lakes',
-                'type': 'raster',
-                'source': {
-                    'type': 'raster',
-                    'tiles': [
-                        'https://cartocdn-ashbu_a.global.ssl.fastly.net/benlaken/api/v1/map/benlaken@fd81823b@319b1009cb5b842304ede10c3f9b95f4:1519931840254/1/{z}/{x}/{y}.png'
-                    ],
-                    'tileSize': 256
-                },
-                'paint': {}
-            }, 'aeroway-taxiway');
-        });
-
-
-    </script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.2.0/mapbox-gl-geocoder.min.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.2.0/mapbox-gl-geocoder.css' type='text/css' />
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+                <a class="navbar-brand" href="#">Ecco Lakes</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://benlaken.com/">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/benlaken/lake_viz_site">code</a>
+                    </li>
+                    </ul>
+                    <form class="form-inline mt-2 mt-md-0">
+                    <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </div>
+            </nav>
+    </div>
+
+    <div id='map' style='position: absolute; width: 100%; height: 60%;'></div>
+
+
+    <div class='container'>
+        <div class='row'>
+            <p>"HERE IS INFO!"</p>
+        </div>
+    </div>
+    <script type=text/javascript>
+        mapboxgl.accessToken = '{{ mytoken }}';
+    </script>
+    <script type=text/javascript src="{{ url_for('static', filename='js/my-mapbox.js') }}"></script>
 </body>
 </html>
