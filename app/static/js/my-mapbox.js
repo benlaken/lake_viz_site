@@ -79,7 +79,7 @@ var mapConfig =
         "layers":[
                     {"type":"cartodb",
                     "options":{
-                        "sql":"select cartodb_id, the_geom_webmercator from ecco_test",
+                        "sql":"select cartodb_id, ROUND(area::numeric, 3) as area, eb_id, the_geom_webmercator from ecco_test",
                         "cartocss":"#l{}",
                         "cartocss_version":"2.1.0"
                         }
@@ -152,22 +152,30 @@ var mapConfig =
 });
 
 
+// EVENTS BELOW
+
 // When a click event occurs on a feature in the places layer, open a popup at the
 // location of the feature, with description HTML from its properties.
-// map.on('click', 'ECCO Lakes', function (e) {
-//     console.log('Clicked the map!')
-//     // var coordinates = e.features[0].geometry.coordinates.slice();
-//     // var description = e.features[0].properties.description;
+map.on('click', 'cartoPolygonLayer', function (e) {
+    //console.log('Clicked the map!',e )
+    var area = e['features'][0]['properties']['area'];
+    var eb_id = e['features'][0]['properties']['eb_id'];
+    var coordinates = e['lngLat'];
+    //console.log(coordinates);
+    var description = `<h4>Lake ${eb_id}</h4> <p><b>lat, lng</b>: ${coordinates['lat']}, ${coordinates['lng']} </br><b>Area</b>=${area}km² </p>`;
+    new mapboxgl.Popup()
+        .setLngLat(coordinates)
+        .setHTML(description)
+        .addTo(map);
 
-//     // // Ensure that if the map is zoomed out such that multiple
-//     // // copies of the feature are visible, the popup appears
-//     // // over the copy being pointed to.
-//     // while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-//     //     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-//     // }
+});
 
-//     // new mapboxgl.Popup()
-//     //     .setLngLat(coordinates)
-//     //     .setHTML(description)
-//     //     .addTo(map);
-// });
+// Change the cursor to a pointer when the mouse is over the places layer.
+map.on('mouseenter', 'cartoPolygonLayer', function () {
+    map.getCanvas().style.cursor = 'pointer';
+});
+
+// Change it back to a pointer when it leaves.
+map.on('mouseleave', 'cartoPolygonLayer', function () {
+    map.getCanvas().style.cursor = '';
+});
