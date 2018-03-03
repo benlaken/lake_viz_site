@@ -45,23 +45,6 @@ map.addControl(new MapboxGeocoder({
 //     }, 'waterway-river-canal-shadow');
 // });
 
-
-
-// map.on('load', function() {
-//     map.addLayer({
-//         'id': 'ECCO Lakes',
-//         'type': 'raster',
-//         'source': {
-//             'type': 'raster',
-//             'tiles': [
-//                 'https://cartocdn-ashbu_a.global.ssl.fastly.net/benlaken/api/v1/map/benlaken@fd81823b@319b1009cb5b842304ede10c3f9b95f4:1519931840254/1/{z}/{x}/{y}.png'
-//             ],
-//             'tileSize': 256
-//         },
-//         'paint': {}
-//     }, 'aeroway-taxiway');
-// });
-
 // Example of using Carto to serve vector tiles from:
 // https://bl.ocks.org/jatorre/6212354d5e023076797db7ea18540c33
 
@@ -167,6 +150,18 @@ map.on('click', 'cartoPolygonLayer', function (e) {
         .setLngLat(coordinates)
         .setHTML(description)
         .addTo(map);
+
+
+    // We also need to populate the html list below the map:
+    // will do this via Jquery.
+    $("#dynamic-title").text("Selected lakes");
+    var searchWord=`${eb_id}`;
+    var exists=$('#dynamic-list li:contains('+searchWord+')').length;
+    // console.log('exists:', exists);
+    if( !exists){
+        console.log(`${eb_id} shouldnt be in list`)
+        $("#dynamic-list").append(`<li class='list-group-item'>Info for lake ${eb_id} ...</li>`);
+        } else {`${eb_id} is in list - no need to do anything`}
 
 });
 
