@@ -150,8 +150,6 @@ map.on('click', 'cartoPolygonLayer', function (e) {
         .setLngLat(coordinates)
         .setHTML(description)
         .addTo(map);
-
-
     // We also need to populate the html list below the map:
     // will do this via Jquery.
     $("#dynamic-title").text("Selected lakes");
@@ -175,14 +173,19 @@ map.on('mouseleave', 'cartoPolygonLayer', function () {
     map.getCanvas().style.cursor = '';
 });
 
-// Search Form action
-
-
+// IF a lake ID is entered directly via search Form action
 $('#myForm').submit(function(e) {
-        console.log('Inside form function');
+        console.log('Form function triggered');
         e.preventDefault();
         var tmp = $("#myForm").serialize();
-        var search_id = tmp.split('=')[1]
-        console.log(search_id)
+        var search_id = tmp.split('=')[1];
+        console.log(search_id);
         $('#myForm')[0].reset();
+        alert(`Currently Search is not built yet. If you really want to find ${search_id} please contact me to finish building it.`);
+        // Now we need to trigger something:
+        // should ideally be finding the shape via a Carto lookup,
+        // retrieve said shape, e.g. as a geostore, go to it and highlight it
+        // open a pop-up, and add it to the lake-list
 });
+
+
