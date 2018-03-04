@@ -13,12 +13,12 @@ var map = new mapboxgl.Map({
 });
 map.addControl(new mapboxgl.FullscreenControl());
 map.addControl(nav, 'top-left');
-map.addControl(new mapboxgl.GeolocateControl({
-                positionOptions: {
-                    enableHighAccuracy: true
-                                },
-                trackUserLocation: true
-                }));
+// map.addControl(new mapboxgl.GeolocateControl({
+//                 positionOptions: {
+//                     enableHighAccuracy: true
+//                                 },
+//                 trackUserLocation: true
+//                 }));
 map.addControl(new mapboxgl.ScaleControl(
                 {
                     maxWidth: 80,
@@ -181,11 +181,38 @@ $('#myForm').submit(function(e) {
         var search_id = tmp.split('=')[1];
         console.log(search_id);
         $('#myForm')[0].reset();
-        alert(`Currently Search is not built yet. If you really want to find ${search_id} please contact me to finish building it.`);
-        // Now we need to trigger something:
-        // should ideally be finding the shape via a Carto lookup,
-        // retrieve said shape, e.g. as a geostore, go to it and highlight it
-        // open a pop-up, and add it to the lake-list
+        // alert(`Currently Search is not built yet. If you really want to find ${search_id || 'a particular lake'} please contact me to finish building it.`);
+        var sql = `SELECT cartodb_id, ROUND(area::numeric, 3) as area, eb_id, the_geom, ST_AsText(ST_Envelope(the_geom)) as bbox FROM ecco_test WHERE eb_id = '${search_id}'`
+        var url = 'https://benlaken.carto.com/api/v2/sql?' + $.param({q: sql, format: "GeoJSON"})
+        console.log('Calling',url)
+        var test;
+        fetch(url)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(myJson) {
+                console.log('action!', myJson);
+                // highlight the lake on the map
+                map.addLayer({
+                    'id': `lake_${search_id}`,
+                    'type': 'fill',
+                    'source': {
+                        'type': 'geojson',
+                        'data': myJson['features'][0],
+                    },
+                    'layout': {},
+                    'paint': {
+                        'fill-color': '#ffff2d',
+                        'fill-opacity': 0.8
+                    }
+                });
+                // Next use the bounding box to zoom to the lake also
+                // Add the lake to the list too
+
+             });
+
+
+
 });
 
 
