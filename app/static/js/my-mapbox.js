@@ -174,3 +174,15 @@ map.on('mouseenter', 'cartoPolygonLayer', function () {
 map.on('mouseleave', 'cartoPolygonLayer', function () {
     map.getCanvas().style.cursor = '';
 });
+
+// Search Form action
+
+
+$('#myForm').submit(function(e) {
+        console.log('Inside form function');
+        e.preventDefault();
+        var tmp = $("#myForm").serialize();
+        var search_id = tmp.split('=')[1]
+        console.log(search_id)
+        $('#myForm')[0].reset();
+});
