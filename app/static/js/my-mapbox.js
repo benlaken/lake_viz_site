@@ -13,22 +13,16 @@ var map = new mapboxgl.Map({
 });
 map.addControl(new mapboxgl.FullscreenControl());
 map.addControl(nav, 'top-left');
-// map.addControl(new mapboxgl.GeolocateControl({
-//                 positionOptions: {
-//                     enableHighAccuracy: true
-//                                 },
-//                 trackUserLocation: true
-//                 }));
 map.addControl(new mapboxgl.ScaleControl(
                 {
                     maxWidth: 80,
                     unit: 'metric'
                     }
                     ));
-map.addControl(new MapboxGeocoder({
-                    accessToken: mapboxgl.accessToken
-                                    }
-            ));
+// map.addControl(new MapboxGeocoder({
+//                     accessToken: mapboxgl.accessToken
+//                                     }
+//             ));
 
 // TURN ON BELOW TO ACTIVATE DYNAMIC HILL SHADING EFFECT
 // map.on('load', function () {
@@ -150,18 +144,21 @@ map.on('click', 'cartoPolygonLayer', function (e) {
         .setLngLat(coordinates)
         .setHTML(description)
         .addTo(map);
-    // We also need to populate the html list below the map:
-    // will do this via Jquery.
+    populateList(eb_id=eb_id);
+});
+
+// We also need to populate the html list below the map:
+// will do this via Jquery.
+function populateList(eb_id){
     $("#dynamic-title").text("Selected lakes");
     var searchWord=`${eb_id}`;
     var exists=$('#dynamic-list li:contains('+searchWord+')').length;
     // console.log('exists:', exists);
     if( !exists){
-        console.log(`${eb_id} shouldnt be in list`)
+        //console.log(`${eb_id} shouldnt be in list`)
         $("#dynamic-list").append(`<li class='list-group-item'>Info for lake ${eb_id} ...</li>`);
         } else {`${eb_id} is in list - no need to do anything`}
-
-});
+    };
 
 // Change the cursor to a pointer when the mouse is over the places layer.
 map.on('mouseenter', 'cartoPolygonLayer', function () {
@@ -179,12 +176,12 @@ $('#myForm').submit(function(e) {
         e.preventDefault();
         var tmp = $("#myForm").serialize();
         var search_id = tmp.split('=')[1];
-        console.log(search_id);
+        //console.log(search_id);
         $('#myForm')[0].reset();
         // alert(`Currently Search is not built yet. If you really want to find ${search_id || 'a particular lake'} please contact me to finish building it.`);
         var sql = `SELECT cartodb_id, ROUND(area::numeric, 3) as area, eb_id, the_geom, ST_AsText(ST_Envelope(the_geom)) as bbox FROM ecco_test WHERE eb_id = '${search_id}'`
         var url = 'https://benlaken.carto.com/api/v2/sql?' + $.param({q: sql, format: "GeoJSON"})
-        console.log('Calling',url)
+        //console.log('Calling',url)
         var test;
         fetch(url)
             .then(function(response) {
@@ -203,12 +200,26 @@ $('#myForm').submit(function(e) {
                     'layout': {},
                     'paint': {
                         'fill-color': '#ffff2d',
-                        'fill-opacity': 0.8
+                        'fill-opacity': 0.5
                     }
                 });
-                // Next use the bounding box to zoom to the lake also
-                // Add the lake to the list too
 
+
+                // Add the lake to the list
+                populateList(eb_id=search_id);
+                var corners = myJson['features'][0]['properties']['bbox'].split('(')[2].split(')')[0].split(',')
+                // Use the bounding box to zoom to the lake
+                map.fitBounds([[
+                                corners[0].split(' ')[0],
+                                corners[0].split(' ')[1]
+                            ], [
+                                corners[2].split(' ')[0],
+                                corners[2].split(' ')[1]
+                            ]],
+                            {
+                              padding: {top: 10, bottom:10, left: 10, right: 10}
+                              }
+                        );
              });
 
 
