@@ -227,3 +227,12 @@ $('#myForm').submit(function(e) {
 });
 
 
+var testPy = fetch('http://localhost:5000/py_func?eb_id=1038dh').then((response) => {
+    if(response.ok) {
+      return response.json();
+    } else {
+      throw new Error('Server response wasn\'t OK');
+    }
+  })
+
+// Access contents of the promse e.g. via testPy.then(value => console.log(value))
