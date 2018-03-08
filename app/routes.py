@@ -1,29 +1,53 @@
 from flask import render_template, request, redirect, jsonify
 from app import app
-# import datetime
+import json
 import requests
 import ee
 import os
 import pandas as pd
 import time
-# import tempfile
+import tempfile
 
 
 try:
-    ee_user = os.environ['EE_USER']
+    ee_user = os.environ['client_email']
     print('USER =', ee_user)
 except:
     ee_user = None
 if ee_user:
     print(f'In deployed environment, using  {ee_user}')
     # looks like I may need to add all of the privatekey info to credentials on Heroku and reconstruct the json object.
-    #creds_string = jsonify(
-    #     ee_user=ee_user,
-    #     ...
-    # )
+    # cred_d = {
+    #     "type": os.environ['type'],
+    #     "project_id": os.environ['project_id'],
+    #     "private_key_id": os.environ['private_key_id'],
+    #     "private_key": os.environ['private_key'],
+    #     "client_email": os.environ['client_email'],
+    #     "client_id": os.environ['client_id'],
+    #     "auth_uri": os.environ['auth_uri'],
+    #     "token_uri": os.environ['token_uri'],
+    #     "auth_provider_x509_cert_url": os.environ['auth_provider_x509_cert_url'],
+    #     "client_x509_cert_url": os.environ['client_x509_cert_url'],
+    #     }
+    creds_string = json.dumps({
+        "type": os.environ['type'],
+        "project_id": os.environ['project_id'],
+        "private_key_id": os.environ['private_key_id'],
+        "private_key": os.environ['private_key'],
+        "client_email": os.environ['client_email'],
+        "client_id": os.environ['client_id'],
+        "auth_uri": os.environ['auth_uri'],
+        "token_uri": os.environ['token_uri'],
+        "auth_provider_x509_cert_url": os.environ['auth_provider_x509_cert_url'],
+        "client_x509_cert_url": os.environ['client_x509_cert_url'],
+    }).encode()
+    # convert json string to binary format:
+    #binary_creds_string = ' '.join(map(bin,bytearray(creds_string, 'utf8')))
+    print(creds_string)
     # private_key = os.environ['EE_PRIVATE_KEY']
-    # tf = tempfile.NamedTemporaryFile(mode='w+b',)
-    # tf.write(creds_string) # should be written in binary mode...
+    #tf = tempfile.NamedTemporaryFile(mode='w+b',)
+    #tf.write(creds_string) # should be written as a binary string...
+    #credentials = ee.ServiceAccountCredentials(ee_user, tf)
     credentials = ee.ServiceAccountCredentials(ee_user, 'privatekey.json')
     ee.Initialize(credentials, 'https://earthengine.googleapis.com')
     # print(f'Temp name {tf.name}')
@@ -90,10 +114,5 @@ def my_py_func(cloud_percent=15):
 
     # pass the df as a json object ready for rendering in a plot object on the front end
     run_time = pd.datetime.now() - start
-    return df.to_json(orient='index')
-
-
-    # return jsonify(
-    #     id=eb_id,
-    #     time=f'{datetime.datetime.now()}'
-    # )
+    #return df.to_json(orient='index') # This will return data with date numbers as the index
+    return df.to_json() # this will return data with the columns as the index
