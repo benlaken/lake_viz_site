@@ -134,29 +134,38 @@ var mapConfig =
 // When a click event occurs on a feature in the places layer, open a popup at the
 // location of the feature, with description HTML from its properties.
 map.on('click', 'cartoPolygonLayer', function (e) {
-    //console.log('Clicked the map!',e )
+    //console.log('Clicked the map!',e );
+    //var geom_object = e.features[0].geometry;
     var area = e['features'][0]['properties']['area'];
     var eb_id = e['features'][0]['properties']['eb_id'];
     var coordinates = e['lngLat'];
+    var landsat_data = fetch(`http://localhost:5000/py_func?eb_id=${eb_id}`).then((response) => {
+        if(response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Server response wasn\'t OK');
+        }
+    })
     //console.log(coordinates);
     var description = `<h4>Lake ${eb_id}</h4> <p><b>lat, lng</b>: ${coordinates['lat']}, ${coordinates['lng']} </br><b>Area</b>=${area}km² </p>`;
     new mapboxgl.Popup()
         .setLngLat(coordinates)
         .setHTML(description)
         .addTo(map);
-    populateList(eb_id=eb_id);
+    populateList(eb_id=eb_id, data=landsat_data);  //issue here <- need to pass the resolved json object
+    //landsat_data.await(console.table(landsat_data));
 });
 
 // We also need to populate the html list below the map:
 // will do this via Jquery.
-function populateList(eb_id){
+function populateList(eb_id, data=null){
     $("#dynamic-title").text("Selected lakes");
     var searchWord=`${eb_id}`;
     var exists=$('#dynamic-list li:contains('+searchWord+')').length;
     // console.log('exists:', exists);
     if( !exists){
         //console.log(`${eb_id} shouldnt be in list`)
-        $("#dynamic-list").append(`<li class='list-group-item'>Info for lake ${eb_id} ...</li>`);
+        $("#dynamic-list").append(`<li class='list-group-item'>Info for lake ${eb_id}: ${data}</li>`);
         } else {`${eb_id} is in list - no need to do anything`}
     };
 
@@ -226,13 +235,22 @@ $('#myForm').submit(function(e) {
 
 });
 
-
-var testPy = fetch('http://localhost:5000/py_func?eb_id=1038dh').then((response) => {
-    if(response.ok) {
-      return response.json();
-    } else {
-      throw new Error('Server response wasn\'t OK');
-    }
-  })
+function earthEngineCall(eb_id){
+    var testPy = fetch(`http://localhost:5000/py_func?eb_id=${eb_id}`).then((response) => {
+        if(response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Server response wasn\'t OK');
+        }
+    })
+    return testPy;
+};
 
 // Access contents of the promse e.g. via testPy.then(value => console.log(value))
+var testPy = fetch('http://localhost:5000/py_func?eb_id=1038dh').then((response) => {
+    if(response.ok) {
+    return response.json();
+    } else {
+    throw new Error('Server response wasn\'t OK');
+    }
+})

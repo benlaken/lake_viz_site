@@ -2,7 +2,7 @@
 
 # Lake site
 
-Demo site using [Mapbox GL JS](https://www.mapbox.com/mapbox-gl-js/api/#map), [Bootstrap](https://getbootstrap.com/), and [Flask](http://flask.pocoo.org/) to expose open data from the [ECCO project](http://www.mn.uio.no/kjemi/english/research/projects/ecco/).
+Demo site using several technologies, including [Mapbox GL JS](https://www.mapbox.com/mapbox-gl-js/api/#map), [Bootstrap](https://getbootstrap.com/), [Flask](http://flask.pocoo.org/), and dynamic data from [Google's Earth Engine](https://earthengine.google.com/), to explore a sample of sites from the [ECCO project](http://www.mn.uio.no/kjemi/english/research/projects/ecco/).
 
 ## Requirements
 * Python > 3.4

@@ -1,2 +1,5 @@
-flask
-gunicorn
+flask==0.12.2
+gunicorn==19.7.1
+requests==2.18.4
+pandas==0.22.0
+google-api-python-client==0.1.129
