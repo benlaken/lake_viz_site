@@ -2,7 +2,7 @@
 
 # Lake site
 
-Demo site using [Mapbox GL JS](https://www.mapbox.com/mapbox-gl-js/api/#map), [Bootstrap](https://getbootstrap.com/), and [Flask](http://flask.pocoo.org/) to expose open data from the [ECCO project](http://www.mn.uio.no/kjemi/english/research/projects/ecco/).
+Demo site using several technologies, including [Mapbox GL JS](https://www.mapbox.com/mapbox-gl-js/api/#map), [Bootstrap](https://getbootstrap.com/), [Flask](http://flask.pocoo.org/), and dynamic data from [Google's Earth Engine](https://earthengine.google.com/), to explore a sample of sites from the [ECCO project](http://www.mn.uio.no/kjemi/english/research/projects/ecco/).
 
 ## Requirements
 * Python > 3.4
@@ -15,7 +15,7 @@ Demo site using [Mapbox GL JS](https://www.mapbox.com/mapbox-gl-js/api/#map), [B
 
 After obtaining a [Mapbox access token](](https://www.mapbox.com/help/how-access-tokens-work/)) (which are free with a mapbox account) you should `export MAPBOX_ACCESS_TOKEN='XXXX'` to your local environment.
 
-Next install the Python dependencies specified in the requirements file via: `pip install -t requirements.txt`
+Next install the Python dependencies specified in the requirements file via: `pip install -r requirements.txt`
 
 You will then need to export a flask environment variable `export FLASK_APP=lake_site.py`
 

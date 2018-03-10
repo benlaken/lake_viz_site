@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+src/
+.export_vars.sh
+lake_viz.code-workspace
+privatekey.json
+
 # C extensions
 *.so
 

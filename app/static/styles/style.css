@@ -35,3 +35,7 @@ body {
   min-width: 50%;
   margin-left: 25%;
 }
+
+li {
+  word-wrap: break-word;
+}
