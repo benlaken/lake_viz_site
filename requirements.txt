@@ -4,5 +4,6 @@ gunicorn==19.7.1
 requests==2.18.4
 pandas==0.22.0
 pprint
+flask-cors==3.0.3
 #google-api-python-client==0.1.129
 -e git+https://github.com/benlaken/earthengine-api#egg=ee_version_x&subdirectory=python # install a python package from a repo subdirectory

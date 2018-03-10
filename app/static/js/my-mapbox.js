@@ -194,7 +194,7 @@ $('#myForm').submit(function(e) {
 
 
 function earthEngineAndList(eb_id){
-    var testPy = fetch(`http://localhost:5000/py_func?eb_id=${eb_id}`)
+    var testPy = fetch(`/py_func?eb_id=${eb_id}`)
     .then((resp) => resp.json())
     .then(function(data){
         populateList(eb_id=eb_id, data=data);

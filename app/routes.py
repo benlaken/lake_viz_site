@@ -20,6 +20,7 @@ if json_creds:
 elif ee_user and not json_creds:
     print(f'In environment with ee_user but no local json')
     # looks like I need to add all of the privatekey info to credentials on Heroku and reconstruct a dict
+    # note - the private_key proved tricky, needed to be very careful to have a clean format to resolve it.
     cred_d = {
         "type": os.environ['type'],
         "project_id": os.environ['project_id'],
@@ -32,7 +33,6 @@ elif ee_user and not json_creds:
         "auth_provider_x509_cert_url": os.environ['auth_provider_x509_cert_url'],
         "client_x509_cert_url": os.environ['client_x509_cert_url'],
     }
-    #pprint(cred_d)
     credentials = ee.ServiceAccountCredentials(ee_user, key_data=cred_d)
     ee.Initialize(credentials, 'https://earthengine.googleapis.com')
 else:
@@ -42,7 +42,7 @@ else:
 
 @app.route('/', methods=['GET'])
 def index():
-    d = {'item':['test', 'test2']} #, **search_for}
+    d = {'item':['test', 'test2']}
     token = os.getenv('MAPBOX_ACCESS_TOKEN')
     return render_template('index.html', d=d, mytoken=token)
 
