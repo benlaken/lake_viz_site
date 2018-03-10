@@ -9,27 +9,13 @@ import time
 import tempfile
 
 
-try:
-    ee_user = os.environ['client_email']
-    print('USER =', ee_user)
-except:
-    ee_user = None
+ee_user = os.environ['client_email']
+print('USER =', ee_user)
 if ee_user:
+    secret_string = os.environ['secret_string']
     print(f'In deployed environment, using  {ee_user}')
-    # looks like I may need to add all of the privatekey info to credentials on Heroku and reconstruct the json object.
-    # cred_d = {
-    #     "type": os.environ['type'],
-    #     "project_id": os.environ['project_id'],
-    #     "private_key_id": os.environ['private_key_id'],
-    #     "private_key": os.environ['private_key'],
-    #     "client_email": os.environ['client_email'],
-    #     "client_id": os.environ['client_id'],
-    #     "auth_uri": os.environ['auth_uri'],
-    #     "token_uri": os.environ['token_uri'],
-    #     "auth_provider_x509_cert_url": os.environ['auth_provider_x509_cert_url'],
-    #     "client_x509_cert_url": os.environ['client_x509_cert_url'],
-    #     }
-    creds_string = json.dumps({
+    # looks like I need to add all of the privatekey info to credentials on Heroku and reconstruct a dict
+    cred_d = {
         "type": os.environ['type'],
         "project_id": os.environ['project_id'],
         "private_key_id": os.environ['private_key_id'],
@@ -40,18 +26,9 @@ if ee_user:
         "token_uri": os.environ['token_uri'],
         "auth_provider_x509_cert_url": os.environ['auth_provider_x509_cert_url'],
         "client_x509_cert_url": os.environ['client_x509_cert_url'],
-    }).encode()
-    # convert json string to binary format:
-    #binary_creds_string = ' '.join(map(bin,bytearray(creds_string, 'utf8')))
-    print(creds_string)
-    # private_key = os.environ['EE_PRIVATE_KEY']
-    #tf = tempfile.NamedTemporaryFile(mode='w+b',)
-    #tf.write(creds_string) # should be written as a binary string...
-    #credentials = ee.ServiceAccountCredentials(ee_user, tf)
-    credentials = ee.ServiceAccountCredentials(ee_user, 'privatekey.json')
-    ee.Initialize(credentials, 'https://earthengine.googleapis.com')
-    # print(f'Temp name {tf.name}')
-    # tf.close()
+        }
+        credentials = ee.ServiceAccountCredentials(ee_user, key_data=cred_d)
+        ee.Initialize(credentials, 'https://earthengine.googleapis.com')
 else:
     print('In local environment - authorizing via EE stored creds.')
     ee.Initialize()
