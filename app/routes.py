@@ -7,8 +7,9 @@ import os
 import pandas as pd
 import time
 import tempfile
+from pprint import pprint
 
-
+print(f'Here is the ee source: {ee.__path__}')
 ee_user = os.environ['client_email']
 print('USER =', ee_user)
 if ee_user:
@@ -26,9 +27,11 @@ if ee_user:
         "token_uri": os.environ['token_uri'],
         "auth_provider_x509_cert_url": os.environ['auth_provider_x509_cert_url'],
         "client_x509_cert_url": os.environ['client_x509_cert_url'],
-        }
-        credentials = ee.ServiceAccountCredentials(ee_user, key_data=cred_d)
-        ee.Initialize(credentials, 'https://earthengine.googleapis.com')
+    }
+    pprint(cred_d)
+    #credentials = ee.ServiceAccountCredentials(ee_user, 'privatekey.json')
+    credentials = ee.ServiceAccountCredentials(ee_user, key_data=cred_d)
+    ee.Initialize(credentials, 'https://earthengine.googleapis.com')
 else:
     print('In local environment - authorizing via EE stored creds.')
     ee.Initialize()

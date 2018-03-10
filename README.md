@@ -15,7 +15,7 @@ Demo site using several technologies, including [Mapbox GL JS](https://www.mapbo
 
 After obtaining a [Mapbox access token](](https://www.mapbox.com/help/how-access-tokens-work/)) (which are free with a mapbox account) you should `export MAPBOX_ACCESS_TOKEN='XXXX'` to your local environment.
 
-Next install the Python dependencies specified in the requirements file via: `pip install -t requirements.txt`
+Next install the Python dependencies specified in the requirements file via: `pip install -r requirements.txt`
 
 You will then need to export a flask environment variable `export FLASK_APP=lake_site.py`
 
