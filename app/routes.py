@@ -11,10 +11,14 @@ from pprint import pprint
 
 print(f'Here is the ee source: {ee.__path__}')
 ee_user = os.environ['client_email']
+json_creds = os.path.exists('privatekey.json')
 print('USER =', ee_user)
-if ee_user:
-    secret_string = os.environ['secret_string']
-    print(f'In deployed environment, using  {ee_user}')
+if json_creds:
+    print('In environment with local json creds')
+    credentials = ee.ServiceAccountCredentials(ee_user, 'privatekey.json')
+    ee.Initialize(credentials, 'https://earthengine.googleapis.com')
+elif ee_user and not json_creds:
+    print(f'In environment with ee_user but no local json')
     # looks like I need to add all of the privatekey info to credentials on Heroku and reconstruct a dict
     cred_d = {
         "type": os.environ['type'],
@@ -28,12 +32,11 @@ if ee_user:
         "auth_provider_x509_cert_url": os.environ['auth_provider_x509_cert_url'],
         "client_x509_cert_url": os.environ['client_x509_cert_url'],
     }
-    pprint(cred_d)
-    #credentials = ee.ServiceAccountCredentials(ee_user, 'privatekey.json')
+    #pprint(cred_d)
     credentials = ee.ServiceAccountCredentials(ee_user, key_data=cred_d)
     ee.Initialize(credentials, 'https://earthengine.googleapis.com')
 else:
-    print('In local environment - authorizing via EE stored creds.')
+    print('No ee_user or local json: attempting to authorize via EE local creds')
     ee.Initialize()
 
 
