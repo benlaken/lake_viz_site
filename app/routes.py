@@ -98,4 +98,4 @@ def my_py_func(cloud_percent=15):
     # pass the df as a json object ready for rendering in a plot object on the front end
     run_time = pd.datetime.now() - start
     #return df.to_json(orient='index') # This will return data with date numbers as the index
-    return df.to_json() # this will return data with the columns as the index
+    return df.to_json(date_format='iso') # this will return data with the columns as the index

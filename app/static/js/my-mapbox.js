@@ -118,16 +118,61 @@ map.on('click', 'cartoPolygonLayer', function (e) {
         .addTo(map);
 });
 
+function createTableFromData(data) {
+    console.log('inside table maker:', data);
+    var tableHtml = '<div class="table-responsive"> <caption>Landsat data retrieved from Earth Engine</caption>'
+    tableHtml += '<table class="table table-hover">';
+    var currentRowHtml;
+    // Add the table headers
+    tableHtml +='<thead class="thead-dark"> <tr> <th>Date</th>';
+    var keys = Object.keys(data);
+    for (var i = 0, length = keys.length; i < length; i++) {
+        currentRowHtml = '<th scope="col">' + keys[i] + '</th>';
+        tableHtml += currentRowHtml;
+    };
+    tableHtml +='</tr> </thead>';
+    // Extract the dates items
+    tableHtml +='<tbody class="tbody-striped">'
+    var array_dates = [];   //empty array to hold the table dates
+    for (x in Object.values(data)[0]) {
+        //var tmp = Date(x);
+        //array_dates.push(tmp.toString());
+        array_dates.push(x);
+    };
+    for (var i = 0, length = array_dates.length; i < length; i++){
+        tableHtml += '<tr>';
+        tableHtml += `<td> ${array_dates[i]} </td>`;
+        //var x = array_dates[i]
+        //tableHtml += `<td>${(new Date(x).getDate())+"/"+(new Date(x).getMonth() + 1)+"/"+(new Date(x).getFullYear())}</td>`;
+        for (var j = 0, key_len = keys.length; j < key_len; j++){
+            tableHtml += `<td>${data[keys[j]][array_dates[i]].toFixed(2)}</td>`;
+        };
+        tableHtml += '</tr>';
+    };
+    tableHtml += '</tbody>'
+    tableHtml +='</table> </div>';
+    return tableHtml;
+}
+
+
 // Add an item of html to the list below the map using Jquery
 function populateList(eb_id, data=null){
     $("#dynamic-title").text("Selected lakes");
     var searchWord=`${eb_id}`;
     var exists=$('#dynamic-list li:contains('+searchWord+')').length;
     if( !exists){
-        // console.log(`Adding ${eb_id} to list`);
+        console.log(`Adding ${eb_id} to list`);
         // console.log("data",data);
-        $("#dynamic-list").append(`<li class='list-group-item'>Info for lake ${eb_id}: <br>Earth engine sample response - B1: ${JSON.stringify(data['B1'])}</li>`);
-        } else {`${eb_id} is in list - no need to do anything`}
+        var tableToAppend = createTableFromData(data);
+        var tmp_html = `<li class='list-group-item'>Info for lake ${eb_id}: <br>` +
+                        //`Earth engine sample response - B1: ${JSON.stringify(data['B1'])}` +
+                        tableToAppend +
+                        `</li>`;
+        $("#dynamic-list").append(tmp_html);
+        console.log('table output:', tableToAppend);
+        } else {
+            console.log(`${eb_id} is in list - no need to do anything`)
+        }
     };
 
 // Change the cursor to a pointer when the mouse is over the places layer.
