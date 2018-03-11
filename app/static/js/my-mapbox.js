@@ -118,9 +118,11 @@ map.on('click', 'cartoPolygonLayer', function (e) {
         .addTo(map);
 });
 
-function createTableFromData(data) {
-    console.log('inside table maker:', data);
-    var tableHtml = '<div class="table-responsive"> <caption>Landsat data retrieved from Earth Engine</caption>'
+
+// note that tables get a uniqe id of 'tbl_${eb_id}'
+function createTableFromData(data, eb_id) {
+    //console.log('inside table maker:', data, eb_id);
+    var tableHtml = `<div class="table-responsive" id="tbl_${eb_id}" style="display:none;"> <caption>Landsat data retrieved from Earth Engine</caption>`;
     tableHtml += '<table class="table table-hover">';
     var currentRowHtml;
     // Add the table headers
@@ -161,19 +163,29 @@ function populateList(eb_id, data=null){
     var searchWord=`${eb_id}`;
     var exists=$('#dynamic-list li:contains('+searchWord+')').length;
     if( !exists){
-        console.log(`Adding ${eb_id} to list`);
-        // console.log("data",data);
-        var tableToAppend = createTableFromData(data);
-        var tmp_html = `<li class='list-group-item'>Info for lake ${eb_id}: <br>` +
+        var tableToAppend = createTableFromData(data, eb_id);
+        var tmp_html = `<li class='list-group-item'><h4><button id="tableButton_${eb_id}" onclick="hideShow(eb_id='${eb_id}')">`+
+                        `<i class="fas fa-table fa-1x"></i></button> Lake ${eb_id}</h4>` +
                         //`Earth engine sample response - B1: ${JSON.stringify(data['B1'])}` +
                         tableToAppend +
                         `</li>`;
         $("#dynamic-list").append(tmp_html);
-        console.log('table output:', tableToAppend);
         } else {
-            console.log(`${eb_id} is in list - no need to do anything`)
+            //console.log(`${eb_id} is in list - no need to do anything`)
         }
     };
+
+
+function hideShow(eb_id){
+    var x = document.getElementById(`tbl_${eb_id}`);
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+};
+
+
 
 // Change the cursor to a pointer when the mouse is over the places layer.
 map.on('mouseenter', 'cartoPolygonLayer', function () {

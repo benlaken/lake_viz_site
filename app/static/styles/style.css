@@ -39,3 +39,7 @@ body {
 li {
   word-wrap: break-word;
 }
+
+#tableButton {
+  cursor: pointer;
+}
