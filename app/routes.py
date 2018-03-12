@@ -5,7 +5,7 @@ import requests
 import ee
 import os
 import numpy as np
-from colormap import rgb2hex
+import webcolors
 import pandas as pd
 import time
 import tempfile
@@ -121,7 +121,7 @@ def my_py_func(cloud_percent=15):
     blues = [convert_array(tmp) for tmp in df['B1']]
     colors = []
     for row in range(len(reds)):
-        colors.append(rgb2hex(reds[row], greens[row], blues[row]))
+        colors.append(webcolors.rgb_to_hex((reds[row], greens[row], blues[row])))
     df['colors'] = colors
     # pass the df as a json object ready for rendering in a plot object on the front end
     #print(df.to_json(date_format='iso'))
