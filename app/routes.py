@@ -56,7 +56,7 @@ def my_py_func(cloud_percent=15):
     """
     start = pd.datetime.now()
     eb_id = request.args.get('eb_id')
-    print('Was passed', eb_id)
+    #print('Was passed', eb_id)
     # obtain the geojson/geometry data
     # Below is a placeholder geometry for dev purposes
     # feature_geometry = {
@@ -109,5 +109,6 @@ def my_py_func(cloud_percent=15):
     # Calculate a representation of color and add it to the DF
     # pass the df as a json object ready for rendering in a plot object on the front end
     run_time = pd.datetime.now() - start
+    print(f'Python EE function finished, returned list with {len(df)} items')
     #return df.to_json(orient='index') # This will return data with date numbers as the index
     return df.to_json(date_format='iso') # this will return data with the columns as the index

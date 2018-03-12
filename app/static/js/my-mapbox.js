@@ -169,7 +169,9 @@ function populateList(eb_id, data=null){
                         //`Earth engine sample response - B1: ${JSON.stringify(data['B1'])}` +
                         tableToAppend +
                         `</li>`;
-        $("#dynamic-list").append(tmp_html);
+        console.log('in pop func');
+        $(`#loader_${eb_id}`).css("display","none"); // remove spinner...
+        $("#dynamic-list").append(tmp_html); // ...then add the list item
         } else {
             //console.log(`${eb_id} is in list - no need to do anything`)
         }
@@ -200,6 +202,8 @@ map.on('mouseleave', 'cartoPolygonLayer', function () {
 // IF a lake ID is entered directly via search Form action
 $('#myForm').submit(function(e) {
         console.log('Form function triggered');
+        var tmp_loader = `<li class='list-group-item' id="loader_${eb_id}"> <div class="loader"></div> </li>`
+        $("#dynamic-list").append(tmp_loader);
         e.preventDefault();
         var tmp = $("#myForm").serialize();
         var search_id = tmp.split('=')[1];
@@ -251,6 +255,10 @@ $('#myForm').submit(function(e) {
 
 
 function earthEngineAndList(eb_id){
+    // immediatley add a loader to the list...
+    //
+    var tmp_loader = `<li class='list-group-item' id="loader_${eb_id}"> <div class="loader"></div> </li>`
+    $("#dynamic-list").append(tmp_loader);
     var testPy = fetch(`/py_func?eb_id=${eb_id}`)
     .then((resp) => resp.json())
     .then(function(data){
