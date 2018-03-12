@@ -4,6 +4,8 @@ import json
 import requests
 import ee
 import os
+import numpy as np
+from colormap import rgb2hex
 import pandas as pd
 import time
 import tempfile
@@ -114,9 +116,36 @@ def my_py_func(cloud_percent=15):
 
     df = pd.DataFrame(tmp_data, columns=['B1','B2','B3','B4','B5','B6','B7','cloud_cover'], index=tmp_date_index)
     # Calculate a representation of color and add it to the DF
+    reds = [convert_array(tmp) for tmp in df['B4']]
+    greens = [convert_array(tmp) for tmp in df['B3']]
+    blues = [convert_array(tmp) for tmp in df['B1']]
+    colors = []
+    for row in range(len(reds)):
+        colors.append(rgb2hex(reds[row], greens[row], blues[row]))
+    df['colors'] = colors
     # pass the df as a json object ready for rendering in a plot object on the front end
     #print(df.to_json(date_format='iso'))
     run_time = pd.datetime.now() - start
     #print(f'Python EE function finished, returned list with {len(df)} items',pd.datetime.now() - start)
-    #return df.to_json(orient='index') # This will return data with date numbers as the index
     return df.to_json(date_format='iso') # this will return data with the columns as the index
+
+
+def convert_array(arr, oldMax=600, oldMin=-600, newMin=1, newMax=255):
+    """
+    Convert an input value into a new value between 1 to 255.
+    This function can be vectorised before it is applied:
+    e.g. f = np.vectorize()
+    """
+    if arr == None:
+        return None
+    else:
+        oldRange = oldMax - oldMin
+        newRange = newMax - newMin
+        new_arr = (((arr - oldMin) * newRange) / oldRange) + newMin
+        tmp = np.int32(np.floor(new_arr))
+        if tmp < 0:
+            return 0
+        elif tmp > 255:
+            return 255
+        else:
+            return tmp

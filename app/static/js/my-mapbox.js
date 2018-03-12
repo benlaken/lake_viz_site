@@ -149,7 +149,12 @@ function createTableFromData(data, eb_id) {
         for (var j = 0, key_len = keys.length; j < key_len; j++){
             tmp_element = data[keys[j]][array_dates[i]]
             if(tmp_element != null && tmp_element != '') {
-                tableHtml += `<td>${data[keys[j]][array_dates[i]].toFixed(2)}</td>`;
+                try {
+                    tableHtml += `<td>${data[keys[j]][array_dates[i]].toFixed(2)}</td>`;
+                }
+                catch(err) {
+                    tableHtml += `<td>${data[keys[j]][array_dates[i]]}</td>`;
+                }
              } else {
                 tableHtml += `<td>None</td>`;
              }
@@ -265,7 +270,7 @@ $('#myForm').submit(function(e) {
 function earthEngineAndList(eb_id){
     // immediatley add a loader to the list...
     if($(`#loader_${eb_id}`).length == 0) {
-        var tmp_loader = `<li class='list-group-item' id="loader_${eb_id}"> <div class="loader"></div> </li>`;
+        var tmp_loader = `<li class='list-group-item' id="loader_${eb_id}"> <div class="loader"></div></li>`;
         $("#dynamic-list").append(tmp_loader);
     };
     var testPy = fetch(`/py_func?eb_id=${eb_id}`)
