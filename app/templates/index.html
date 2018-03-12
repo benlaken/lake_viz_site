@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>ECCO Lakes</title>
+    <title>Lake looker</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet' />
@@ -33,18 +33,17 @@
                         <div class="collapse navbar-collapse" id="navbarCollapse">
                             <ul class="navbar-nav mr-auto">
                             <li class="nav-item active">
-                                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                                <a class="nav-link" href="/">Map <span class="sr-only">(current)</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="http://benlaken.com/">About</a>
+                                <a class="nav-link" href="/about">About</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="https://github.com/benlaken/lake_viz_site">code</a>
+                                <a class="nav-link" href="https://github.com/benlaken/lake_viz_site">Code</a>
                             </li>
                             </ul>
                             <form class="form-inline mt-2 mt-md-0" id='myForm'>
-                                <input class="form-control mr-sm-2" id='formBox' type="text" name="lakeSearch" placeholder="🔎 Search by lake ID" aria-label="Search">
-                                <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search by Lake ID</button> -->
+                                  <input class="form-control mr-sm-2" id='formBox' type="text" name="lakeSearch" placeholder="🔎 Search by lake ID" aria-label="Search">
                             </form>
                         </div>
                     </nav>

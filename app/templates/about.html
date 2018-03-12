@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Lake looker</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+ </head>
+ <body>
+
+<!-- Container -->
+<div class="container-fluid">
+    <!-- Masthead -->
+    <div class="masthead">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <a class="navbar-brand" href="#">Lake looker</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Map <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/benlaken/lake_viz_site">Code</a>
+                </li>
+                </ul>
+                <!-- <form class="form-inline mt-2 mt-md-0" id='myForm'>
+                        <input class="form-control mr-sm-2" id='formBox' type="text" name="lakeSearch" placeholder="🔎 Search by lake ID" aria-label="Search">
+                </form> -->
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content-->
+    <div class="masthead">
+    <div class="row">
+        <div class="col-md-12">
+        <!-- START OF BOOTSTRAP GOODNESS -->
+        <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">About this site</h2>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group" id="dynamic-list">
+                        <li class="list-group-item">
+                            <h3>Methods and data</h3>
+                            <p>Landsat 8, Surface reflectance data. Cloud screened for images with less-than 15% cloud cover. </p>
+                        </li>
+                        <li class="list-group-item">
+                            <div class='row'>
+                                <div class='col'>
+                                    <h3>About the authour</h3>
+                                    <p>You can find info about me on my <a href="http://benlaken.com/">personal website</a>.</p>
+                                </div>
+                                <div class='col'>
+                                    <a class="twitter-timeline"  href="https://twitter.com/benlaken" data-widget-id="347359418846949376">Tweets by @benlaken</a>
+                                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div> <!-- col -->
+    </div> <!-- row -->
+    </div>
+
+
+</div> <!-- /container -->
+<script type=text/javascript src="{{ url_for('static', filename='js/my-mapbox.js') }}"></script>
+</body>
+</html>

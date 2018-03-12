@@ -47,6 +47,11 @@ def index():
     return render_template('index.html', d=d, mytoken=token)
 
 
+@app.route('/about', methods=['GET'])
+def about():
+    return render_template('about.html')
+
+
 @app.route('/py_func', methods=['GET'])
 def my_py_func(cloud_percent=15):
     """Example of response - boot local server and visit

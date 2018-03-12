@@ -169,7 +169,8 @@ function populateList(eb_id, data=null){
     var exists=$('#dynamic-list li:contains('+searchWord+')').length;
     if( !exists){
         var tableToAppend = createTableFromData(data, eb_id);
-        var tmp_html = `<li class='list-group-item'><h4><button id="tableButton_${eb_id}" onclick="hideShow(eb_id='${eb_id}')">`+
+        var tmp_html = `<li class='list-group-item'><h4>`+
+                        `<button id="tableButton_${eb_id}" onclick="hideShow(eb_id='${eb_id}')">`+
                         `<i class="fas fa-table fa-1x"></i></button> Lake ${eb_id}</h4>` +
                         //`Earth engine sample response - B1: ${JSON.stringify(data['B1'])}` +
                         tableToAppend +
@@ -205,19 +206,15 @@ map.on('mouseleave', 'cartoPolygonLayer', function () {
 
 // IF a lake ID is entered directly via search Form action
 $('#myForm').submit(function(e) {
-        console.log('Form function triggered');
+        //console.log('Form function triggered');
         // need to add logical test here for loader
-        if($(`#loader_${eb_id}`).length == 0) {
-            var tmp_loader = `<li class='list-group-item' id="loader_${eb_id}"> <div class="loader"></div> </li>`;
-            $("#dynamic-list").append(tmp_loader);
-        };
         e.preventDefault();
         var tmp = $("#myForm").serialize();
-        var search_id = tmp.split('=')[1];
+        var eb_id = tmp.split('=')[1];
         //console.log(search_id);
         $('#myForm')[0].reset();
         // alert(`Currently Search is not built yet. If you really want to find ${search_id || 'a particular lake'} please contact me to finish building it.`);
-        var sql = `SELECT cartodb_id, ROUND(area::numeric, 3) as area, eb_id, the_geom, ST_AsText(ST_Envelope(the_geom)) as bbox FROM ecco_test WHERE eb_id = '${search_id}'`
+        var sql = `SELECT cartodb_id, ROUND(area::numeric, 3) as area, eb_id, the_geom, ST_AsText(ST_Envelope(the_geom)) as bbox FROM ecco_test WHERE eb_id = '${eb_id}'`
         var url = 'https://benlaken.carto.com/api/v2/sql?' + $.param({q: sql, format: "GeoJSON"})
         //console.log('Calling',url)
         var test;
@@ -229,7 +226,7 @@ $('#myForm').submit(function(e) {
                 //console.log('action!', myJson);
                 // highlight the lake on the map
                 map.addLayer({
-                    'id': `lake_${search_id}`,
+                    'id': `lake_${eb_id}`,
                     'type': 'fill',
                     'source': {
                         'type': 'geojson',
@@ -243,7 +240,11 @@ $('#myForm').submit(function(e) {
                 });
                 // Dynamically obtain data from earth engine,process it, and add the it to the html list
                 //populateList(eb_id=search_id);
-                earthEngineAndList(eb_id=search_id);
+                // if($(`#loader_${eb_id}`).length == 0) {
+                //     var tmp_loader = `<li class='list-group-item' id="loader_${eb_id}"> <div class="loader"></div> </li>`;
+                //     $("#dynamic-list").append(tmp_loader);
+                // };
+                earthEngineAndList(eb_id=eb_id);
                 var corners = myJson['features'][0]['properties']['bbox'].split('(')[2].split(')')[0].split(',')
                 // Use the bounding box to zoom to the lake
                 map.fitBounds([[
