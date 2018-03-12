@@ -56,32 +56,45 @@ def my_py_func(cloud_percent=15):
     """
     start = pd.datetime.now()
     eb_id = request.args.get('eb_id')
-    print('Was passed', eb_id)
+    #print('Was passed', eb_id)
     # obtain the geojson/geometry data
-    feature_geometry = {
-        'type': 'MultiPolygon',
-        'coordinates': [[[
-            [10.12939453125,60.09566451298078],
-            [10.040130615234375,60.02369688198333],
-            [10.191192626953125,60.01957970414989],
-            [10.1568603515625,60.05661584530574],
-            [10.162353515625,60.090871552737134],
-            [10.12939453125,60.09566451298078]
-        ]]]
-    }
-
+    # Below is a placeholder geometry for dev purposes
+    # feature_geometry = {
+    #     'type': 'MultiPolygon',
+    #     'coordinates': [[[
+    #         [10.12939453125,60.09566451298078],
+    #         [10.040130615234375,60.02369688198333],
+    #         [10.191192626953125,60.01957970414989],
+    #         [10.1568603515625,60.05661584530574],
+    #         [10.162353515625,60.090871552737134],
+    #         [10.12939453125,60.09566451298078]
+    #     ]]]
+    # }
+    query = f"""SELECT cartodb_id, ROUND(area::numeric, 3) as area, eb_id, the_geom
+            FROM ecco_test
+            where eb_id = '{eb_id}' """
+    account = 'benlaken'
+    urlCarto = f"https://{account}.carto.com/api/v2/sql"
+    sql = {"q": query, "format": "GeoJSON"}
+    r = requests.get(urlCarto, params=sql)
+    feature_geometry = r.json().get('features')[0].get('geometry')
+    if feature_geometry.get('type') == 'MultiPolygon':
+        geom = ee.Geometry.MultiPolygon(feature_geometry.get('coordinates'))
+    elif feature_geometry.get('type') == 'Polygon':
+        geom = ee.Geometry.Polygon(feature_geometry.get('coordinates'))
+    else:
+        print("bad geometry passed")
     # Landsat 8 surface reflectance
     collection = ee.ImageCollection(
-        'LANDSAT/LC08/C01/T1_SR').filterDate('2013-04-11', f'{pd.datetime.now().date()}').filterBounds(feature_geometry).filterMetadata('CLOUD_COVER', 'less_than', cloud_percent).sort('SENSING_TIME')
+        'LANDSAT/LC08/C01/T1_SR').filterDate('2013-04-11', f'{pd.datetime.now().date()}').filterBounds(geom).filterMetadata('CLOUD_COVER', 'less_than', cloud_percent).sort('SENSING_TIME')
     # use it to generate a feature object for EE
     def setProperty(image):
-        dict = image.select(['B1','B2','B3','B4','B5','B6','B7']).reduceRegion(ee.Reducer.mean(), feature_geometry)
+        dict = image.select(['B1','B2','B3','B4','B5','B6','B7']).reduceRegion(ee.Reducer.mean(), geom)
         return image.set(dict)
     # map a reducer to an image collection object with the feature
     withMean = collection.map(setProperty)
     # obtain a time series of avaialbe obs and put it into a pd dataframe object
     d_all= withMean.getInfo()
-
     tmp_data = []
     tmp_date_index = []
     for n, feature in enumerate(d_all.get('features')):
@@ -94,8 +107,8 @@ def my_py_func(cloud_percent=15):
 
     df = pd.DataFrame(tmp_data, columns=['B1','B2','B3','B4','B5','B6','B7','cloud_cover'], index=tmp_date_index)
     # Calculate a representation of color and add it to the DF
-
     # pass the df as a json object ready for rendering in a plot object on the front end
     run_time = pd.datetime.now() - start
+    print(f'Python EE function finished, returned list with {len(df)} items')
     #return df.to_json(orient='index') # This will return data with date numbers as the index
-    return df.to_json() # this will return data with the columns as the index
+    return df.to_json(date_format='iso') # this will return data with the columns as the index
