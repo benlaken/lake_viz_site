@@ -170,9 +170,8 @@ function createTableFromData(data, eb_id) {
 // Add an item of html to the list below the map using Jquery
 function populateList(eb_id, data=null){
     $("#dynamic-title").text("Selected lakes");
-    var searchWord=`${eb_id}`;
-    var exists=$('#dynamic-list li:contains('+searchWord+')').length;
-    if( !exists){
+    var exists=$(`#tbl_${eb_id}`).length;
+    if(!exists){
         var tableToAppend = createTableFromData(data, eb_id);
         var tmp_html = `<li class='list-group-item'><h4>`+
                         `<button id="tableButton_${eb_id}" onclick="hideShow(eb_id='${eb_id}')">`+
@@ -183,7 +182,7 @@ function populateList(eb_id, data=null){
         $(`#loader_${eb_id}`).css("display","none"); // remove spinner...
         $("#dynamic-list").append(tmp_html); // ...then add the list item
         } else {
-            //console.log(`${eb_id} is in list - no need to do anything`)
+            console.log(`${eb_id} is in list - no need to do anything`)
         }
     };
 
@@ -270,14 +269,29 @@ $('#myForm').submit(function(e) {
 function earthEngineAndList(eb_id){
     // immediatley add a loader to the list...
     if($(`#loader_${eb_id}`).length == 0) {
-        var tmp_loader = `<li class='list-group-item' id="loader_${eb_id}"> <div class="loader"></div></li>`;
+        var tmp_loader = `<li class='list-group-item' id="loader_${eb_id}">`+
+                        `<div class="row">`+
+                            `<div class="column-3">`+
+                                `<div class="loader"></div>`+
+                            `</div>`+
+                            `<div class="column-9">`+
+                                `<p style="margin-top: 0.6rem; margin-left: 1rem;">Loading data for lake ${eb_id}</p>`+
+                            `</div>`+
+                         `</div>`+
+                         `</li>`;
         $("#dynamic-list").append(tmp_loader);
     };
-    var testPy = fetch(`/py_func?eb_id=${eb_id}`)
-    .then((resp) => resp.json())
-    .then(function(data){
-        populateList(eb_id=eb_id, data=data);
-    });
+    var exists=$(`#tbl_${eb_id}`).length;
+    console.log('made it 0');
+    if(!exists){
+        console.log('made it 1');
+        var testPy = fetch(`/py_func?eb_id=${eb_id}`)
+        .then((resp) => resp.json())
+        .then(function(data){
+            console.log('Made it 2');
+            populateList(eb_id=eb_id, data=data);
+        });
+    };
 };
 
 // Access contents of the promse e.g. via testPy.then(value => console.log(value))
