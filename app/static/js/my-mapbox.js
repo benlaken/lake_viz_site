@@ -147,7 +147,12 @@ function createTableFromData(data, eb_id) {
         //var x = array_dates[i]
         //tableHtml += `<td>${(new Date(x).getDate())+"/"+(new Date(x).getMonth() + 1)+"/"+(new Date(x).getFullYear())}</td>`;
         for (var j = 0, key_len = keys.length; j < key_len; j++){
-            tableHtml += `<td>${data[keys[j]][array_dates[i]].toFixed(2)}</td>`;
+            tmp_element = data[keys[j]][array_dates[i]]
+            if(tmp_element != null && tmp_element != '') {
+                tableHtml += `<td>${data[keys[j]][array_dates[i]].toFixed(2)}</td>`;
+             } else {
+                tableHtml += `<td>None</td>`;
+             }
         };
         tableHtml += '</tr>';
     };
