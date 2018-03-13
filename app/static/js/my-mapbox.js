@@ -166,6 +166,27 @@ function createTableFromData(data, eb_id) {
     return tableHtml;
 }
 
+function createVisFromData(data, eb_id){
+    var myVlSpec = {
+                    "$schema": "https://vega.github.io/schema/vega-lite/v2.0.json",
+                    "description": "A simple bar chart with embedded data.",
+                    "data": {
+                    "values": [
+                        {"a": "A","b": 28}, {"a": "B","b": 55}, {"a": "C","b": 43},
+                        {"a": "D","b": 91}, {"a": "E","b": 81}, {"a": "F","b": 53},
+                        {"a": "G","b": 19}, {"a": "H","b": 87}, {"a": "I","b": 52}
+                    ]
+                    },
+                    "mark": "bar",
+                    "encoding": {
+                    "x": {"field": "a", "type": "ordinal"},
+                    "y": {"field": "b", "type": "quantitative"}
+                    }
+      };
+    vegaEmbed(`#vis_${eb_id}`, myVlSpec);
+    return visHtml
+};
+
 
 // Add an item of html to the list below the map using Jquery
 function populateList(eb_id, data=null){
@@ -178,9 +199,11 @@ function populateList(eb_id, data=null){
                         `<i class="fas fa-table fa-1x"></i></button> Lake ${eb_id}</h4>` +
                         //`Earth engine sample response - B1: ${JSON.stringify(data['B1'])}` +
                         tableToAppend +
+                        `<div id="vis_${eb_id}"></div>` +
                         `</li>`;
         $(`#loader_${eb_id}`).css("display","none"); // remove spinner...
         $("#dynamic-list").append(tmp_html); // ...then add the list item
+        createVisFromData(data, eb_id); //add the data structure to the vis div
         } else {
             //console.log(`${eb_id} is in list - no need to do anything`)
         }
