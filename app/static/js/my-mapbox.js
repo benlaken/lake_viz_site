@@ -166,6 +166,60 @@ function createTableFromData(data, eb_id) {
     return tableHtml;
 }
 
+function createVisFromData(data, eb_id){
+    // Now I need to construct a json object with the right format:
+    // data: {values: [{'a':'date','b': 1unit}]}
+    // with color as a list that will go into an argument
+    var keys = Object.keys(data['colors']);
+    var tmp_vals = [];
+    for(var i = 0, length = keys.length; i < length; i++){
+        tmp_vals.push(
+                    {"a": keys[i],
+                     "b": 1,
+                     "color": data['colors'][keys[i]]
+                    }
+                );
+    };
+    var myVlSpec = {
+                    "$schema": "https://vega.github.io/schema/vega-lite/v2.0.json",
+                    "width": 600,
+                    "height": 200,
+                    "title": "Landsat 8 SR falsecolor [B4 B3 B1]: color scaled over min/max counts of -300/700",
+                    "description": "Landsat 8 surface reflectance falsecolor [B4 B3 B1]: min/max radiance of -200/600",
+                    "data": {
+                    "values": tmp_vals,
+                    },
+                    "mark": "bar",
+                    "encoding": {
+                                "x": {"timeUnit": "yearmonthdatehoursseconds",
+                                    "title": 'Date',
+                                    "field": "a",
+                                    "type": "temporal",
+                                    "axis": {"title": "",
+                                             "ticks": false,
+                                             "labels":{"format": "timeFormat(datum.value, '%b %Y')"},
+                                            },
+                                    },
+                                "y": {"field": "b",
+                                    "type": "quantitative",
+                                    "axis": {"title": null, "labels": false}
+                                    },
+                                "color": {
+                                    "field": "color",
+                                    "type": "nominal",
+                                    "scale": null
+                                        },
+                                },
+                    "config": {
+                        "bar": {
+                                 "binSpacing": 0,
+                                },
+                        "axis":{"grid":false},
+                            }
+                    };
+    vegaEmbed(`#vis_${eb_id}`, myVlSpec);
+};
+
 
 // Add an item of html to the list below the map using Jquery
 function populateList(eb_id, data=null){
@@ -178,9 +232,11 @@ function populateList(eb_id, data=null){
                         `<i class="fas fa-table fa-1x"></i></button> Lake ${eb_id}</h4>` +
                         //`Earth engine sample response - B1: ${JSON.stringify(data['B1'])}` +
                         tableToAppend +
+                        `<div id="vis_${eb_id}"></div>` +
                         `</li>`;
         $(`#loader_${eb_id}`).css("display","none"); // remove spinner...
         $("#dynamic-list").append(tmp_html); // ...then add the list item
+        createVisFromData(data, eb_id); //add the data structure to the vis div
         } else {
             //console.log(`${eb_id} is in list - no need to do anything`)
         }
