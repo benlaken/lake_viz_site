@@ -167,40 +167,57 @@ function createTableFromData(data, eb_id) {
 }
 
 function createVisFromData(data, eb_id){
-    console.log(data);
     // Now I need to construct a json object with the right format:
     // data: {values: [{'a':'date','b': 1unit}]}
     // with color as a list that will go into an argument
-    //debugger;
+    var keys = Object.keys(data['colors']);
+    var tmp_vals = [];
+    for(var i = 0, length = keys.length; i < length; i++){
+        tmp_vals.push(
+                    {"a": keys[i],
+                     "b": 1,
+                     "color": data['colors'][keys[i]]
+                    }
+                );
+    };
     var myVlSpec = {
                     "$schema": "https://vega.github.io/schema/vega-lite/v2.0.json",
-                    "description": "A simple bar chart with embedded data.",
+                    "width": 600,
+                    "height": 200,
+                    "title": "Relative changed in lake color",
+                    "description": "Relative changes in lake color.",
                     "data": {
-                    "values": [
-                        {"a": "A","b": 28, "color":"#4286f4"},
-                        {"a": "B","b": 55, "color":"#4286f4"},
-                        {"a": "C","b": 43, "color":"#4286f4"},
-                        {"a": "D","b": 91, "color":"#4286f4"},
-                         {"a": "E","b": 81, "color":"#7442f4"},
-                         {"a": "F","b": 53, "color":"#4286f4"},
-                        {"a": "G","b": 19, "color":"#4286f4"},
-                         {"a": "H","b": 87, "color":"#4286f4"},
-                          {"a": "I","b": 52, "color":"#4286f4"}
-                    ]
+                    "values": tmp_vals,
                     },
                     "mark": "bar",
                     "encoding": {
-                    "x": {"field": "a", "type": "ordinal"},
-                    "y": {"field": "b", "type": "quantitative"},
-                    "color": {
-                        "field": "color",
-                        "type": "nominal",
-                        "scale": null
-                      }
-                    }
-      };
+                                "x": {"timeUnit": "yearmonthdatehoursseconds",
+                                    "title": 'Date',
+                                    "field": "a",
+                                    "type": "temporal",
+                                    "axis": {"title": "",
+                                             "ticks": false,
+                                             "labels":{"format": "timeFormat(datum.value, '%b %Y')"},
+                                            },
+                                    },
+                                "y": {"field": "b",
+                                    "type": "quantitative",
+                                    "axis": {"title": null, "labels": false}
+                                    },
+                                "color": {
+                                    "field": "color",
+                                    "type": "nominal",
+                                    "scale": null
+                                        },
+                                },
+                    "config": {
+                        "bar": {
+                                 "binSpacing": 0,
+                                },
+                        "axis":{"grid":false},
+                            }
+                    };
     vegaEmbed(`#vis_${eb_id}`, myVlSpec);
-    return visHtml
 };
 
 

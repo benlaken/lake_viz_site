@@ -55,7 +55,7 @@ def about():
 
 
 @app.route('/py_func', methods=['GET'])
-def my_py_func(cloud_percent=15):
+def my_py_func(cloud_percent=40):
     """Example of response - boot local server and visit
        http://localhost:5000/py_func?eb_id=1038dh
 
@@ -96,8 +96,9 @@ def my_py_func(cloud_percent=15):
     collection = ee.ImageCollection(
         'LANDSAT/LC08/C01/T1_SR').filterDate('2013-04-11', f'{pd.datetime.now().date()}').filterBounds(geom).filterMetadata('CLOUD_COVER', 'less_than', cloud_percent).sort('SENSING_TIME')
     # use it to generate a feature object for EE
+    aggregate = ee.Reducer.median()
     def setProperty(image):
-        dict = image.select(['B1','B2','B3','B4','B5','B6','B7']).reduceRegion(ee.Reducer.mean(), geom)
+        dict = image.select(['B1','B2','B3','B4','B5','B6','B7']).reduceRegion(aggregate, geom)
         return image.set(dict)
     # map a reducer to an image collection object with the feature
     withMean = collection.map(setProperty)
@@ -123,6 +124,7 @@ def my_py_func(cloud_percent=15):
     for row in range(len(reds)):
         colors.append(webcolors.rgb_to_hex((reds[row], greens[row], blues[row])))
     df['colors'] = colors
+    #print('heres the dataframe', df)
     # pass the df as a json object ready for rendering in a plot object on the front end
     #print(df.to_json(date_format='iso'))
     run_time = pd.datetime.now() - start
@@ -130,7 +132,7 @@ def my_py_func(cloud_percent=15):
     return df.to_json(date_format='iso') # this will return data with the columns as the index
 
 
-def convert_array(arr, oldMax=600, oldMin=-600, newMin=1, newMax=255):
+def convert_array(arr, oldMax=10000, oldMin=-200, newMin=1, newMax=255):
     """
     Convert an input value into a new value between 1 to 255.
     This function can be vectorised before it is applied:
