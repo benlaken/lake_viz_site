@@ -184,8 +184,8 @@ function createVisFromData(data, eb_id){
                     "$schema": "https://vega.github.io/schema/vega-lite/v2.0.json",
                     "width": 600,
                     "height": 200,
-                    "title": "Relative changed in lake color",
-                    "description": "Relative changes in lake color.",
+                    "title": "Landsat 8 SR falsecolor [B4 B3 B1]: color scaled over min/max counts of -300/700",
+                    "description": "Landsat 8 surface reflectance falsecolor [B4 B3 B1]: min/max radiance of -200/600",
                     "data": {
                     "values": tmp_vals,
                     },

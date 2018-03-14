@@ -55,7 +55,7 @@ def about():
 
 
 @app.route('/py_func', methods=['GET'])
-def my_py_func(cloud_percent=40):
+def my_py_func(cloud_percent=90):
     """Example of response - boot local server and visit
        http://localhost:5000/py_func?eb_id=1038dh
 
@@ -132,7 +132,7 @@ def my_py_func(cloud_percent=40):
     return df.to_json(date_format='iso') # this will return data with the columns as the index
 
 
-def convert_array(arr, oldMax=10000, oldMin=-200, newMin=1, newMax=255):
+def convert_array(arr, oldMax=700, oldMin=-300, newMin=1, newMax=255):
     """
     Convert an input value into a new value between 1 to 255.
     This function can be vectorised before it is applied:
