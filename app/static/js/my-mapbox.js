@@ -5,9 +5,9 @@ var map = new mapboxgl.Map({
     container: 'map',
     center: [12.945578003813353, 64.48815159548138],
     zoom: 6,
-    // style: 'mapbox://styles/mapbox/light-v9',
+     //style: 'mapbox://styles/mapbox/light-v9',
     style:'mapbox://styles/mapbox/satellite-v9',
-    // style: 'mapbox://styles/mapbox/cjaudgl840gn32rnrepcb9b9g',
+    //style: 'mapbox://styles/mapbox/cjaudgl840gn32rnrepcb9b9g',
     touchZoomRotate: true,
     pitch: 20,
 });
@@ -19,6 +19,48 @@ map.addControl(new mapboxgl.ScaleControl(
                     unit: 'metric'
                     }
                     ));
+
+var layerData = {
+        user_name: 'benlaken',
+        sublayers: [{
+          sql: "SELECT cartodb_id, ROUND(area::numeric, 3) as area, eb_id, the_geom_webmercator from ecco_test",
+        cartocss: "#l{polygon-fill: #ff0000}"
+            }],
+        maps_api_template: 'https://benlaken.carto.com'
+    };
+
+cartodb.Tiles.getTiles(layerData, function (result, error) {
+      if (result == null) {
+        //console.log("error: ", error.errors.join('\n'));
+        return;
+      }
+      //console.log("url template is ", result.tiles[0]);
+
+      var tiles = result.tiles.map(function (tileUrl) {
+        return tileUrl
+          .replace('{s}', 'a')
+          .replace(/\.png/, '.mvt');
+      });
+      //console.log('Tiles from:',tiles);
+      map.addSource('lake_source', { type: 'vector', tiles: tiles });
+      map.addLayer({
+          id: 'lakePolygonLayer',
+          'type': 'fill',
+          'source': 'lake_source',
+          'source-layer': 'layer0',
+        'layout': {
+                    'visibility': 'visible'
+            },
+          'paint': {
+                    "fill-opacity": 0.75,
+                    "fill-color": "rgba(76, 195, 255, 1)",
+                    "fill-outline-color": "rgba(63, 248, 255, 1)"
+          }
+      });
+    });
+
+
+
 // map.addControl(new MapboxGeocoder({
 //                     accessToken: mapboxgl.accessToken
 //                                     }
@@ -39,73 +81,13 @@ map.addControl(new mapboxgl.ScaleControl(
 //     }, 'waterway-river-canal-shadow');
 // });
 
-// Example of using Carto to serve vector tiles from:
-// https://bl.ocks.org/jatorre/6212354d5e023076797db7ea18540c33
-
-map.on('style.load', function () {
-
-// Calling CARTO Maps API to get two vector layers
-//The order under what the layers are defined determines
-//the name of the source-layer on the vector tiles.
-//First layer is named layer0, then layer1, etc..
-
-var username = "benlaken";
-var mapConfig =
-        {"version":"1.3.0",
-        "stat_tag":"API",
-        "layers":[
-                    {"type":"cartodb",
-                    "options":{
-                        "sql":"select cartodb_id, ROUND(area::numeric, 3) as area, eb_id, the_geom_webmercator from ecco_test",
-                        "cartocss":"#l{}",
-                        "cartocss_version":"2.1.0"
-                        }
-                    }
-        ]
-    };
-    var encodedConfig = encodeURIComponent(JSON.stringify(mapConfig))
-
-    nanoajax.ajax({
-        url:'https://'+username+'.carto.com/api/v1/map?config='+encodedConfig},
-        function (code, resp){
-            cartoLayer = JSON.parse(resp);
-
-            //Create a MapboxGL CARTO source
-            var baseCartoURL = "https://cartocdn-ashbu_{s}.global.ssl.fastly.net/";
-            var cartoSource = {
-                type: 'vector',
-                tiles: [baseCartoURL.replace("{s}","a")+username+'/api/v1/map/'+cartoLayer.layergroupid+'/{z}/{x}/{y}.mvt',baseCartoURL.replace("{s}","b")+username+'/api/v1/map/'+cartoLayer.layergroupid+'/{z}/{x}/{y}.mvt',baseCartoURL.replace("{s}","c")+username+'/api/v1/map/'+cartoLayer.layergroupid+'/{z}/{x}/{y}.mvt',baseCartoURL.replace("{s}","d")+username+'/api/v1/map/'+cartoLayer.layergroupid+'/{z}/{x}/{y}.mvt'],
-                minzoom: 3,
-                maxzoom: 18
-            };
-            map.addSource('cartoSource', cartoSource);
-
-            //Add the first layer to the map POLYGONS
-            map.addLayer({
-                'id': 'cartoPolygonLayer',
-                'type': 'fill',
-                'source': 'cartoSource',
-                'source-layer': 'layer0',
-                'layout': {
-                    'visibility': 'visible'
-                },
-                "paint": {
-                    "fill-opacity": 0.75,
-                    "fill-color": "rgba(76, 195, 255, 1)",
-                    "fill-outline-color": "rgba(63, 248, 255, 1)"
-                }
-            });
-        }
-    );
-
-});
 
 
 // EVENTS BELOW
 
 // When a click event occurs on a feature in the places layer, open a popup at the
 // location of the feature, with description HTML from its properties.
-map.on('click', 'cartoPolygonLayer', function (e) {
+map.on('click', 'lakePolygonLayer', function (e) {
     //var geom_object = e.features[0].geometry;
     var area = e['features'][0]['properties']['area'];
     var eb_id = e['features'][0]['properties']['eb_id'];
